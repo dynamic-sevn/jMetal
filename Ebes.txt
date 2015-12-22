@@ -1,0 +1,20 @@
+Mobile_Bridge_25N_35B_8G_16OrdZXY W D
+Nave_Industrial_3D_Wood-Steel_164N_351B_13G W D
+Bridge_Cable_Stayed_60G_837N_1584B_XYZ W D
+Bridge_Stayed_Cable_2Col_33G_133N_221B_93ZXY W D
+Nave_Industrial_3D_Wood-Steel_164N_351B_36G W D
+Bridge_Cable_Stayed_22G_837N_1584B_XYZ
+Bridge_Cable_Stayed_32G_837N_1584B_XYZ
+Bridge_Cable_Stayed_46G_837N_1584B_XYZ
+Bridge_Cable_Stayed_49G_837N_1584B_XYZ
+
+
+
+Objective Function
+------------------
+W total weigh
+D summation of deformations
+SSAE stress square absolute error
+ENS+ Efficiency of Nash-Sutcliffe for stress
+ENS- Efficiency of Nash-Sutcliffe for compress
+
