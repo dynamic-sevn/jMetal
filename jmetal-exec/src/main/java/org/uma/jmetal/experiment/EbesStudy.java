@@ -58,8 +58,6 @@ public class EbesStudy {
 
     List<TaggedAlgorithm<List<DoubleSolution>>> algorithmList = configureAlgorithmList(problemList) ;
 
-    List<String> referenceFrontFileNames = Arrays.asList() ;
-
     ExperimentConfiguration<DoubleSolution, List<DoubleSolution>> configuration =
         new ExperimentConfigurationBuilder<DoubleSolution, List<DoubleSolution>>("EbesStudy")
             .setAlgorithmList(algorithmList)
@@ -68,7 +66,6 @@ public class EbesStudy {
             .setOutputParetoFrontFileName("FUN")
             .setOutputParetoSetFileName("VAR")
             .setReferenceFrontDirectory("/pareto_fronts")
-            .setReferenceFrontFileNames(referenceFrontFileNames)
             .setIndicatorList(Arrays.asList(
                 new Epsilon<DoubleSolution>(), new Spread<DoubleSolution>(), new GenerationalDistance<DoubleSolution>(),
                 new PISAHypervolume<DoubleSolution>(),
