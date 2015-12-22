@@ -5,6 +5,8 @@ import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
+import java.io.FileNotFoundException;
+
 /**
  * Created by Antonio J. Nebro on 11/07/14.
  */
@@ -14,7 +16,7 @@ public class EbesMutation implements MutationOperator<DoubleSolution> {
   private JMetalRandom randomGenerator ;
 
   /** Constructor */
-  public EbesMutation(double mutationProbability) {
+  public EbesMutation(double mutationProbability) throws FileNotFoundException {
     ebes = new Ebes() ;
 
     this.mutationProbability = mutationProbability ;

@@ -22,10 +22,7 @@ import org.uma.jmetal.solution.impl.DefaultDoubleSolution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.solutionattribute.impl.OverallConstraintViolation;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -712,12 +709,12 @@ public class Ebes extends AbstractDoubleProblem implements ConstrainedProblem<Do
 
   public OverallConstraintViolation<DoubleSolution> overallConstraintViolationDegree ;
 
-  public Ebes() {
+  public Ebes() throws FileNotFoundException {
     overallConstraintViolationDegree = new OverallConstraintViolation<DoubleSolution>() ;
     EBEsInitialize();
   }
 
-  public void EBEsInitialize()  {
+  public void EBEsInitialize() throws FileNotFoundException {
 
     // CALCULAR dd Y CA (CANTIDADES DE NUDOS COARTADOS) AL CARGAR EL ARCHIVO
     // CON ESTO EVITO RECALCULARLOS CADA VEZ QUE SE BUSCA UNA SOLUCIÃƒÂ³N
@@ -4882,7 +4879,7 @@ public void EbesMutation(int groupId, int hi, Variable[] x) {
     }
   }
 
-  public String EBEsReadProblems() {
+  public String EBEsReadProblems() throws FileNotFoundException {
 
     // en aquellos casos en los que se usen iteraciones en los algoritmos y no evaluaciones hacer
     // iteraciones = total evaluaciones / tamaÃ±o poblaciÃ³n
@@ -4893,126 +4890,124 @@ public void EbesMutation(int groupId, int hi, Variable[] x) {
     String txt = "";
     int i=0, j=0;
 
-    try {
-      // create a File instance
-      //java.io.File file = new java.io.File("EBEs.txt");
-      // create a Scanner for the file
-      //java.util.Scanner input = new java.util.Scanner(file);
+    // create a File instance
+    //java.io.File file = new java.io.File("EBEs.txt");
+    // create a Scanner for the file
+    //java.util.Scanner input = new java.util.Scanner(file);
 
-      FileInputStream fis =
-          new FileInputStream(
-              this.getClass().getClassLoader().getResource("EBEs.txt").getPath());
-      InputStreamReader isr = new InputStreamReader(fis);
-      BufferedReader br = new BufferedReader(isr);
+    InputStream inputStream = getClass().getResourceAsStream("/" + "Ebes.txt");
 
-      Scanner input = new Scanner(br) ;
+    if (inputStream == null) {
+      inputStream = new FileInputStream("Ebes.txt");
+    }
 
+    InputStreamReader isr = new InputStreamReader(inputStream);
+    BufferedReader br = new BufferedReader(isr);
 
-      //java.util.Scanner input = new java.util.Scanner(file);
-      // Read name problems EBEs
-      line=input.nextLine();
+    Scanner input = new Scanner(br) ;
 
-      // count spaces
-      j=0;
-      for(i=line.length()-1;i>=0;i--){
-        ch=line.charAt(i);
-        if(ch == ' '){
-          j++;
-        }
+    //java.util.Scanner input = new java.util.Scanner(file);
+    // Read name problems EBEs
+    line=input.nextLine();
+
+    // count spaces
+    j=0;
+    for(i=line.length()-1;i>=0;i--){
+      ch=line.charAt(i);
+      if(ch == ' '){
+        j++;
       }
-      OF_ = new String [j];
-      int indOF=j-1;
+    }
+    OF_ = new String [j];
+    int indOF=j-1;
 
-      j=0;
-      for(i=line.length()-1;i>=0;i--){
+    j=0;
+    for(i=line.length()-1;i>=0;i--){
+      ch=line.charAt(i);
+      if(ch == ' '){
+        j=i+1;
+        break;
+      }
+    }
+    OF_[indOF]=line.substring(j);
+    indOF--;
+    int m=0;
+    if(indOF >= 0)
+    {
+      for(i=j-2;i>=0;i--){
         ch=line.charAt(i);
         if(ch == ' '){
-          j=i+1;
+          m=i+1;
           break;
         }
       }
-      OF_[indOF]=line.substring(j);
+      OF_[indOF]=line.substring(m, j-1);
       indOF--;
-      int m=0;
-      if(indOF >= 0)
-      {
-        for(i=j-2;i>=0;i--){
-          ch=line.charAt(i);
-          if(ch == ' '){
-            m=i+1;
-            break;
-          }
-        }
-        OF_[indOF]=line.substring(m, j-1);
-        indOF--;
-      }
-      int n=0;
-      if(indOF >= 0)
-      {
-        for(i=m-2;i>=0;i--){
-          ch=line.charAt(i);
-          if(ch == ' '){
-            n=i+1;
-            break;
-          }
-        }
-        OF_[indOF]=line.substring(n, m-1);
-        indOF--;
-      }
-
-      int o=0;
-      if(indOF >= 0)
-      {
-        for(i=n-2;i>=0;i--){
-          ch=line.charAt(i);
-          if(ch == ' '){
-            o=i+1;
-            break;
-          }
-        }
-        OF_[indOF]=line.substring(o, n-1);
-        indOF--;
-      }
-
-      int p=0;
-      if(indOF >= 0)
-      {
-        for(i=o-2;i>=0;i--){
-          ch=line.charAt(i);
-          if(ch == ' '){
-            p=i+1;
-            break;
-          }
-        }
-        OF_[indOF]=line.substring(p, o-1);
-        indOF--;
-      }
-
-      line = line.substring(0,i);
-      j=0;
-      for(i=line.length()-1;i>=0;i--){
+    }
+    int n=0;
+    if(indOF >= 0)
+    {
+      for(i=m-2;i>=0;i--){
         ch=line.charAt(i);
         if(ch == ' '){
-          j=i+1;
+          n=i+1;
           break;
         }
       }
-      var1 = line.substring(j);
+      OF_[indOF]=line.substring(n, m-1);
+      indOF--;
+    }
 
-      if(i == -1 )
-      {
-        txt = var1;
+    int o=0;
+    if(indOF >= 0)
+    {
+      for(i=n-2;i>=0;i--){
+        ch=line.charAt(i);
+        if(ch == ' '){
+          o=i+1;
+          break;
+        }
       }
-      else
-      {
-        txt = line.substring(0,i);
+      OF_[indOF]=line.substring(o, n-1);
+      indOF--;
+    }
+
+    int p=0;
+    if(indOF >= 0)
+    {
+      for(i=o-2;i>=0;i--){
+        ch=line.charAt(i);
+        if(ch == ' '){
+          p=i+1;
+          break;
+        }
       }
-      // clse the file
-      input.close();
+      OF_[indOF]=line.substring(p, o-1);
+      indOF--;
     }
-    catch (Exception ex) {
-      System.out.println("Error: data file EBEs not readed");
+
+    line = line.substring(0,i);
+    j=0;
+    for(i=line.length()-1;i>=0;i--){
+      ch=line.charAt(i);
+      if(ch == ' '){
+        j=i+1;
+        break;
+      }
     }
+    var1 = line.substring(j);
+
+    if(i == -1 )
+    {
+      txt = var1;
+    }
+    else
+    {
+      txt = line.substring(0,i);
+    }
+    // clse the file
+    input.close();
+
 
     return txt;
 
@@ -5027,9 +5022,13 @@ public void EbesMutation(int groupId, int hi, Variable[] x) {
 
     try {
       // create a File instance
-      java.io.File file = new java.io.File(fileName);
+      InputStream inputStream = getClass().getResourceAsStream("/" + fileName);
+
+      if (inputStream == null) {
+        inputStream = new FileInputStream(fileName);
+      }
       // create a Scanner for the file
-      Scanner input = new Scanner(file);
+      Scanner input = new Scanner(inputStream);
       // Read data from file
       while(input.hasNext()){
         for (i=0;i<5;i++){txt=input.nextLine();}
