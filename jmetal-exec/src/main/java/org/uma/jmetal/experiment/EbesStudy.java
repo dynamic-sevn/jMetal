@@ -18,8 +18,8 @@ import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
-import org.uma.jmetal.util.experiment.ExperimentConfiguration;
-import org.uma.jmetal.util.experiment.ExperimentConfigurationBuilder;
+import org.uma.jmetal.util.experiment.Experiment;
+import org.uma.jmetal.util.experiment.ExperimentBuilder;
 import org.uma.jmetal.util.experiment.component.*;
 import org.uma.jmetal.util.experiment.util.TaggedAlgorithm;
 
@@ -48,21 +48,22 @@ import java.util.List;
  */
 public class EbesStudy {
   public static void main(String[] args) throws IOException {
-    if (args.length < 2) {
-      throw new JMetalException("Experiment directory required as program parameter") ;
+    if (args.length != 2) {
+      throw new JMetalException("Needed arguments: experimentBaseDirectory referenceFrontDirectory") ;
     }
-
-    String experimentDirectory = args[0] ;
+    String experimentBaseDirectory = args[0] ;
+    String referenceFrontDirectory = args[1] ;
 
     List<Problem<DoubleSolution>> problemList = Arrays.<Problem<DoubleSolution>>asList(new Ebes()) ;
 
     List<TaggedAlgorithm<List<DoubleSolution>>> algorithmList = configureAlgorithmList(problemList) ;
 
-    ExperimentConfiguration<DoubleSolution, List<DoubleSolution>> configuration =
-        new ExperimentConfigurationBuilder<DoubleSolution, List<DoubleSolution>>("EbesStudy")
+    Experiment<DoubleSolution, List<DoubleSolution>> experiment =
+        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("EbesStudy")
             .setAlgorithmList(algorithmList)
             .setProblemList(problemList)
-            .setExperimentBaseDirectory(experimentDirectory)
+            .setExperimentBaseDirectory(experimentBaseDirectory)
+            .setReferenceFrontDirectory(referenceFrontDirectory)
             .setOutputParetoFrontFileName("FUN")
             .setOutputParetoSetFileName("VAR")
             .setReferenceFrontDirectory("/pareto_fronts")
@@ -74,13 +75,13 @@ public class EbesStudy {
             .setNumberOfCores(8)
             .build();
 
-    new ExecuteAlgorithms<>(configuration).run();
-    new GenerateReferenceParetoFront(configuration).run();
-    new ComputeQualityIndicators<>(configuration).run() ;
-    new GenerateLatexTablesWithStatistics(configuration).run() ;
-    new GenerateWilcoxonTestTablesWithR<>(configuration).run() ;
-    new GenerateFriedmanTestTables<>(configuration).run();
-    new GenerateBoxplotsWithR<>(configuration).setRows(1).setColumns(1).run() ;
+    new ExecuteAlgorithms<>(experiment).run();
+    new GenerateReferenceParetoFront(experiment).run();
+    new ComputeQualityIndicators<>(experiment).run() ;
+    new GenerateLatexTablesWithStatistics(experiment).run() ;
+    new GenerateWilcoxonTestTablesWithR<>(experiment).run() ;
+    new GenerateFriedmanTestTables<>(experiment).run();
+    new GenerateBoxplotsWithR<>(experiment).setRows(1).setColumns(1).run() ;
   }
 
   /**
