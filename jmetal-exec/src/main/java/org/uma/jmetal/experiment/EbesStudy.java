@@ -76,7 +76,7 @@ public class EbesStudy {
             .build();
 
     new ExecuteAlgorithms<>(experiment).run();
-    new GenerateReferenceParetoFront(experiment).run();
+    new GenerateReferenceParetoSetAndFrontFromDoubleSolutions(experiment).run();
     new ComputeQualityIndicators<>(experiment).run() ;
     new GenerateLatexTablesWithStatistics(experiment).run() ;
     new GenerateWilcoxonTestTablesWithR<>(experiment).run() ;
