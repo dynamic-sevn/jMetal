@@ -96,10 +96,6 @@ public class ConstraintMOEAD extends AbstractMOEAD<DoubleSolution>  {
     } while (evaluations < maxEvaluations);
   }
 
-  @Override public List<DoubleSolution> getResult() {
-    return population ;
-  }
-
   public void initializePopulation() {
     for (int i = 0; i < populationSize; i++) {
       DoubleSolution newSolution = (DoubleSolution)problem.createSolution() ;
@@ -113,7 +109,7 @@ public class ConstraintMOEAD extends AbstractMOEAD<DoubleSolution>  {
   }
 
   @Override
-  void updateNeighborhood(DoubleSolution individual, int subproblemId, NeighborType neighborType) {
+  protected void updateNeighborhood(DoubleSolution individual, int subproblemId, NeighborType neighborType) {
     int size;
     int time;
 
