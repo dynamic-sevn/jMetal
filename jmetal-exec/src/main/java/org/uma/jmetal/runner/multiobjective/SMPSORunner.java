@@ -26,6 +26,7 @@ import org.uma.jmetal.algorithm.multiobjective.smpso.SMPSOBuilder;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.problem.DoubleProblem;
+import org.uma.jmetal.problem.multiobjective.ebes.Ebes;
 import org.uma.jmetal.runner.AbstractAlgorithmRunner;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
@@ -68,10 +69,11 @@ public class SMPSORunner extends AbstractAlgorithmRunner {
       referenceParetoFront = args[1] ;
     } else {
       problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT4";
-      referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT4.pf" ;
+      referenceParetoFront = ""; //"jmetal-problem/src/test/resources/pareto_fronts/ZDT4.pf" ;
     }
 
-    problem = (DoubleProblem) ProblemUtils.<DoubleSolution> loadProblem(problemName);
+//    problem = (DoubleProblem) ProblemUtils.<DoubleSolution> loadProblem(problemName);
+    problem = new Ebes() ;
 
     BoundedArchive<DoubleSolution> archive = new CrowdingDistanceArchive<DoubleSolution>(100) ;
 
@@ -81,7 +83,7 @@ public class SMPSORunner extends AbstractAlgorithmRunner {
 
     algorithm = new SMPSOBuilder(problem, archive)
         .setMutation(mutation)
-        .setMaxIterations(250)
+        .setMaxIterations(2000)
         .setSwarmSize(100)
         .setRandomGenerator(new MersenneTwisterGenerator())
         .setSolutionListEvaluator(new SequentialSolutionListEvaluator<DoubleSolution>())

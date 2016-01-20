@@ -22,6 +22,7 @@ import org.uma.jmetal.operator.impl.crossover.SBXCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.multiobjective.ebes.Ebes;
 import org.uma.jmetal.runner.AbstractAlgorithmRunner;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
@@ -63,6 +64,7 @@ public class GWASGFARunner extends AbstractAlgorithmRunner {
     }
 
     problem = ProblemUtils.<DoubleSolution> loadProblem(problemName);
+    problem = new Ebes() ;
 
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;
@@ -74,7 +76,7 @@ public class GWASGFARunner extends AbstractAlgorithmRunner {
 
     selection = new BinaryTournamentSelection<DoubleSolution>(new RankingAndCrowdingDistanceComparator<DoubleSolution>());
 
-    algorithm = new GWASFGA<DoubleSolution>(problem, 100, 250, crossover, mutation, selection,new SequentialSolutionListEvaluator<DoubleSolution>()) ;
+    algorithm = new GWASFGA<DoubleSolution>(problem, 100, 2000, crossover, mutation, selection,new SequentialSolutionListEvaluator<DoubleSolution>()) ;
 
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
             .execute() ;

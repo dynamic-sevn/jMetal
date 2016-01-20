@@ -22,6 +22,7 @@ import org.uma.jmetal.operator.impl.crossover.SBXCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.multiobjective.ebes.Ebes;
 import org.uma.jmetal.runner.AbstractAlgorithmRunner;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
@@ -62,10 +63,11 @@ public class NSGAIIRunner extends AbstractAlgorithmRunner {
       referenceParetoFront = args[1] ;
     } else {
       problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
-      referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
+      referenceParetoFront = ""; //"jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
     }
 
-    problem = ProblemUtils.<DoubleSolution> loadProblem(problemName);
+//    problem = ProblemUtils.<DoubleSolution> loadProblem(problemName);
+    problem = new Ebes() ;
 
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;
@@ -79,7 +81,7 @@ public class NSGAIIRunner extends AbstractAlgorithmRunner {
 
     algorithm = new NSGAIIBuilder<DoubleSolution>(problem, crossover, mutation)
         .setSelectionOperator(selection)
-        .setMaxEvaluations(25000)
+        .setMaxEvaluations(100000)
         .setPopulationSize(100)
         .build() ;
 

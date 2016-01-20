@@ -26,6 +26,7 @@ import org.uma.jmetal.algorithm.multiobjective.smpso.SMPSOBuilder;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.problem.DoubleProblem;
+import org.uma.jmetal.problem.multiobjective.ebes.Ebes;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
 import org.uma.jmetal.runner.AbstractAlgorithmRunner;
 import org.uma.jmetal.solution.DoubleSolution;
@@ -79,6 +80,7 @@ public class SMPSOHvRunner extends AbstractAlgorithmRunner {
     }
 
     problem = (DoubleProblem) ProblemUtils.<DoubleSolution> loadProblem(problemName);
+    problem = new Ebes() ;
 
     BoundedArchive<DoubleSolution> archive =
         new HypervolumeArchive<DoubleSolution>(100, new PISAHypervolume<DoubleSolution>()) ;
@@ -89,7 +91,7 @@ public class SMPSOHvRunner extends AbstractAlgorithmRunner {
 
     algorithm = new SMPSOBuilder(problem, archive)
         .setMutation(mutation)
-        .setMaxIterations(250)
+        .setMaxIterations(2000)
         .setSwarmSize(100)
         .setRandomGenerator(new MersenneTwisterGenerator())
         .setSolutionListEvaluator(new SequentialSolutionListEvaluator<DoubleSolution>())

@@ -29,6 +29,7 @@ import org.uma.jmetal.operator.impl.crossover.SBXCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.operator.impl.selection.RandomSelection;
 import org.uma.jmetal.problem.DoubleProblem;
+import org.uma.jmetal.problem.multiobjective.ebes.Ebes;
 import org.uma.jmetal.qualityindicator.impl.Hypervolume;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
 import org.uma.jmetal.runner.AbstractAlgorithmRunner;
@@ -70,10 +71,11 @@ public class SMSEMOARunner extends AbstractAlgorithmRunner {
       referenceParetoFront = args[1] ;
     } else {
       problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
-      referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
+      referenceParetoFront = ""; //"jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
     }
 
     problem = (DoubleProblem)ProblemUtils.<DoubleSolution> loadProblem(problemName);
+    problem = new Ebes();
 
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;
@@ -91,7 +93,7 @@ public class SMSEMOARunner extends AbstractAlgorithmRunner {
 
     algorithm = new SMSEMOABuilder<DoubleSolution>(problem, crossover, mutation)
         .setSelectionOperator(selection)
-        .setMaxEvaluations(25000)
+        .setMaxEvaluations(100000)
         .setPopulationSize(100)
         .setHypervolumeImplementation(hypervolume)
         .build() ;
