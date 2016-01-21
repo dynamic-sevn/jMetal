@@ -75,7 +75,7 @@ public class SteadyStateNSGAIIRunner extends AbstractAlgorithmRunner {
     }
 
     problem = (DoubleProblem) ProblemUtils.<DoubleSolution> loadProblem(problemName);
-    problem = new Ebes() ;
+    //problem = new Ebes() ;
 
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;

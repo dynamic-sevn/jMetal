@@ -6,7 +6,7 @@
   *         Juan J. Durillo <durillo@lcc.uma.es>
   * @version 1.0
  *//**
- * EBEs.java
+ * Ebes.java
  *
  @author Gustavo R. Zavala <grzavala@gmail.com>
   *         Antonio J. Nebro <antonio@lcc.uma.es>
@@ -30,13 +30,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Class representing problem EBEs
+ * Class representing problem Ebes
  * Spatial Bars Structure (Estructuras de Barras Espaciales)
  */
 public class Ebes extends AbstractDoubleProblem implements ConstrainedProblem<DoubleSolution> {
   /**
    * Constructor.
-   * Creates a default instance of the EBEs problem.
+   * Creates a default instance ofcu the Ebes problem.
    * @param solutionType The solution type must "Real" or "BinaryReal".
    */
 
@@ -979,13 +979,19 @@ public class Ebes extends AbstractDoubleProblem implements ConstrainedProblem<Do
       // Efficiency of Nash-Sutcliffe for compress
       else if(OF_[j].equals("ENS-"))
       {
-        fx[j]=FunctionENS(STRESS, 0);
+        fx[j]=FunctionENS(COMPRESSION, 0);
         solution.setObjective(j, fx[j]);
       }
       // Efficiency of Nash-Sutcliffe for stress
       else if(OF_[j].equals("ENS+"))
       {
-        fx[j]=FunctionENS(COMPRESSION, 0);
+        fx[j]=FunctionENS(STRESS, 0);
+        solution.setObjective(j, fx[j]);
+      }
+      // Efficiency of Nash-Sutcliffe for compress
+      else if(OF_[j].equals("ENS"))
+      {
+        fx[j]=FunctionENS(2, 0);
         solution.setObjective(j, fx[j]);
       }
       else
@@ -5437,7 +5443,7 @@ public void EbesMutation(int groupId, int hi, Variable[] x) {
           O[gr]=Groups_[(int)Element_[gr][INDEX_]][COMPRESSION];
       }
     }
-    else
+    else if ( indx == STRESS)
     {
       // stress (+)
       for(int gr=0; gr<numberOfGroupElements_; gr++)
@@ -5447,12 +5453,27 @@ public void EbesMutation(int groupId, int hi, Variable[] x) {
           O[gr]=Groups_[(int)Element_[gr][INDEX_]][STRESS];
       }
     }
+    else {
+      for(int gr=0; gr<numberOfGroupElements_; gr++) {
+        E[gr] = StrainMin_[gr][hi];
+        if (StrainMin_[gr][hi] != 0.0)
+          O[gr]+= Math.abs(Groups_[(int) Element_[gr][INDEX_]][COMPRESSION]);
+
+        E[gr]=StrainMax_[gr][hi];
+        if(StrainMax_[gr][hi] !=0.0)
+          O[gr]+=Math.abs(Groups_[(int)Element_[gr][INDEX_]][STRESS]);
+      }
+    }
+
     //mean of the observed data
     for(int i=0; i<k;i++)
     {
       Om += O[i];
     }
+
     Om = Om/k;
+    if ( indx == 2)
+      Om *=2.0;
 
     double SSRes = 0.0;
     double SSTot = 0.0;
@@ -5464,7 +5485,8 @@ public void EbesMutation(int groupId, int hi, Variable[] x) {
       //Total Sum of Squares (proportional to the sample variance)
       SSTot += Math.pow((O[i] - Om), 2.0);
     }
-    ENS = 1.0 - SSRes / SSTot;
+    //ENS = Math.abs(1.0 - Math.abs(SSRes / SSTot));
+    ENS = Math.abs(SSRes / SSTot);
     return ENS;
   }
 }
