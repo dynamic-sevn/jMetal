@@ -64,7 +64,7 @@ public class NSGAIIIRunner extends AbstractAlgorithmRunner {
 	    SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
 	    String referenceParetoFront = "" ;
 
-    String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1" ;
+    //String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1" ;
 
     //problem = ProblemUtils.loadProblem(problemName);
     problem = new Ebes() ;
@@ -83,7 +83,7 @@ public class NSGAIIIRunner extends AbstractAlgorithmRunner {
             .setCrossoverOperator(crossover)
             .setMutationOperator(mutation)
             .setSelectionOperator(selection)
-            .setMaxIterations(1000)
+            .setMaxIterations(500)
             .build() ;
 
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)

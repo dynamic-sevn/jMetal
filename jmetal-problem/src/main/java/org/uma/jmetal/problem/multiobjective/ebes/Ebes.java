@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 public class Ebes extends AbstractDoubleProblem implements ConstrainedProblem<DoubleSolution> {
   /**
    * Constructor.
-   * Creates a default instance ofcu the Ebes problem.
+   * Creates a default instance of the Ebes problem.
    * @param solutionType The solution type must "Real" or "BinaryReal".
    */
 
@@ -976,22 +976,10 @@ public class Ebes extends AbstractDoubleProblem implements ConstrainedProblem<Do
         solution.setObjective(j, fx[j]);
         // END strain residual minimun ---------------------------------------------
       }
-      // Efficiency of Nash-Sutcliffe for compress
-      else if(OF_[j].equals("ENS-"))
-      {
-        fx[j]=FunctionENS(COMPRESSION, 0);
-        solution.setObjective(j, fx[j]);
-      }
-      // Efficiency of Nash-Sutcliffe for stress
-      else if(OF_[j].equals("ENS+"))
-      {
-        fx[j]=FunctionENS(STRESS, 0);
-        solution.setObjective(j, fx[j]);
-      }
-      // Efficiency of Nash-Sutcliffe for compress
+      // Efficiency of Nash-Sutcliffe for stress and compress
       else if(OF_[j].equals("ENS"))
       {
-        fx[j]=FunctionENS(2, 0);
+        fx[j]=FunctionENS(0);
         solution.setObjective(j, fx[j]);
       }
       else
@@ -3939,16 +3927,16 @@ public class Ebes extends AbstractDoubleProblem implements ConstrainedProblem<Do
         System.out.println("Error in " + G[INDEX_] + " group, the material number " + G[TypeMaterial_] + " is not implemented");
       }
 
-      else if(G[TypeMaterial_] == 10){  // HL-7 HormigÃ³n   7 MN/m2
+      else if(G[TypeMaterial_] == 10){  // reinforced concrete  7 MN/m2
         System.out.println("Error in " + G[INDEX_] + " group, the material number " + G[TypeMaterial_] + " is not implemented");
       }
 
-      else if(G[TypeMaterial_] == 12){  // HL-17 HormigÃ³n 17 MN/m2
+      else if(G[TypeMaterial_] == 12){  // H-17 reinforced concrete 17 MN/m2
         System.out.println("Error in " + G[INDEX_] + " group, the material number " + G[TypeMaterial_] + " is not implemented");
       }
 
-      else if(G[TypeMaterial_] == 14){  // HL-21 HormigÃ³n 21 MN/m2
-        System.out.println("Error in " + G[INDEX_] + " group, the material number " + G[TypeMaterial_] + " is not implemented");
+      else if(G[TypeMaterial_] == 14){  // H-21 reinforced concrete 21 MN/m2
+        //System.out.println("Error in " + G[INDEX_] + " group, the material number " + G[TypeMaterial_] + " is not implemented");
       }
 
       else if(G[TypeMaterial_] == 20)  // Wood hard an halt-hard
@@ -5419,7 +5407,51 @@ public void EbesMutation(int groupId, int hi, Variable[] x) {
     return numberOfVariables_ ;
   }
 
+  public double FunctionENS( int hi)
+  {
+    // function Efficiency Nash-Sutcliffe
+    // O[k] : k-th data value of matirial stress (observed)
+    // E[k] : k-th estimated value of the stress
+    double[] Omax = new double [numberOfGroupElements_];
+    double[] Omin = new double [numberOfGroupElements_];
+    double[] Emax = new double [numberOfGroupElements_];
+    double[] Emin = new double [numberOfGroupElements_];
+    double mOmax = 0.0;
+    double mOmin = 0.0;
 
+    // [0][hi] residual strain axial
+    // [1][hi] residual strain transversal
+
+    for(int gr=0; gr<numberOfGroupElements_; gr++) {
+      Emin[gr] = StrainMin_[gr][hi];
+      Omin[gr] = Groups_[(int) Element_[gr][INDEX_]][COMPRESSION];
+
+      Emax[gr] = StrainMax_[gr][hi];
+      Omax[gr] = Groups_[(int)Element_[gr][INDEX_]][STRESS];
+
+      mOmax += (Omax[gr]);
+      mOmin += (Omin[gr]);
+    }
+
+    //mean of the observed data
+    mOmax = 2 * mOmax / Omax.length;
+    mOmin = 2 * mOmin / Omin.length;
+
+    double SSRes = 0.0;
+    double SSTot = 0.0;
+    double ENS = 0.0;
+    for (int i = 0; i < Omax.length; i++)
+    {
+      //Sum of Squares of Residuals, also called the residual sum of squares
+      SSRes += Math.pow((Omin[i] - Emin[i]), 2.0) + Math.pow((Omax[i] - Emax[i]), 2.0);
+      //Total Sum of Squares (proportional to the sample variance)
+      SSTot +=  Math.pow((Omin[i] - mOmin), 2.0) + Math.pow((Omax[i] - mOmax), 2.0);
+    }
+    ENS = SSRes / SSTot;
+    return ENS;
+  }
+
+/*
   public double FunctionENS(int indx, int hi)
   {
     // function Efficiency Nash-Sutcliffe
@@ -5489,6 +5521,7 @@ public void EbesMutation(int groupId, int hi, Variable[] x) {
     ENS = Math.abs(SSRes / SSTot);
     return ENS;
   }
+  */
 }
 
 

@@ -60,7 +60,7 @@ public class GWASGFARunner extends AbstractAlgorithmRunner {
       referenceParetoFront = args[1] ;
     } else {
       problemName = "org.uma.jmetal.problem.multiobjective.zdt.ZDT1";
-      referenceParetoFront = "jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
+      referenceParetoFront = "" ; //"jmetal-problem/src/test/resources/pareto_fronts/ZDT1.pf" ;
     }
 
     problem = ProblemUtils.<DoubleSolution> loadProblem(problemName);
@@ -76,7 +76,7 @@ public class GWASGFARunner extends AbstractAlgorithmRunner {
 
     selection = new BinaryTournamentSelection<DoubleSolution>(new RankingAndCrowdingDistanceComparator<DoubleSolution>());
 
-    algorithm = new GWASFGA<DoubleSolution>(problem, 100, 2000, crossover, mutation, selection,new SequentialSolutionListEvaluator<DoubleSolution>()) ;
+    algorithm = new GWASFGA<DoubleSolution>(problem, 100, 1000, crossover, mutation, selection,new SequentialSolutionListEvaluator<DoubleSolution>()) ;
 
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
             .execute() ;
