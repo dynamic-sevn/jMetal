@@ -67,7 +67,8 @@ public class MOCellRunner extends AbstractAlgorithmRunner {
     }
 
     problem = ProblemUtils.<DoubleSolution> loadProblem(problemName);
-    problem = new Ebes() ;
+    //problem = new Ebes("Mobile_Bridge_25N_35B_8G_16OrdZXY.ebe", new String[]{"W", "D", "ENS"}) ;
+    problem = new Ebes("Displaced_Column_for_Vehicle_Ramp.ebe", new String[]{"W", "D", "ENS"}) ;
 
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;

@@ -67,7 +67,7 @@ public class NSGAIIRunner extends AbstractAlgorithmRunner {
     }
 
 //    problem = ProblemUtils.<DoubleSolution> loadProblem(problemName);
-    problem = new Ebes() ;
+    problem = new Ebes("Displaced_Column_for_Vehicle_Ramp.ebe", new String[]{"W", "D", "ENS"}) ;
 
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 20.0 ;

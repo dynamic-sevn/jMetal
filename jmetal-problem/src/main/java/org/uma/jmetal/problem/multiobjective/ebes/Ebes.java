@@ -25,6 +25,7 @@ import org.uma.jmetal.util.solutionattribute.impl.OverallConstraintViolation;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -709,12 +710,30 @@ public class Ebes extends AbstractDoubleProblem implements ConstrainedProblem<Do
 
   public OverallConstraintViolation<DoubleSolution> overallConstraintViolationDegree ;
 
+
+  /**
+   * Constructor
+   * @throws FileNotFoundException
+   */
   public Ebes() throws FileNotFoundException {
     overallConstraintViolationDegree = new OverallConstraintViolation<DoubleSolution>() ;
-    EBEsInitialize();
+    String file = EBEsReadProblems() + ".ebe";
+
+    EBEsInitialize(file);
   }
 
-  public void EBEsInitialize() throws FileNotFoundException {
+  /**
+   * Constructor
+   * @throws FileNotFoundException
+   */
+  public Ebes(String ebesFileName, String[] objectiveList) throws FileNotFoundException {
+    overallConstraintViolationDegree = new OverallConstraintViolation<DoubleSolution>() ;
+    OF_ = objectiveList ;
+
+    EBEsInitialize(ebesFileName);
+  }
+
+  public void EBEsInitialize(String file) throws FileNotFoundException {
 
     // CALCULAR dd Y CA (CANTIDADES DE NUDOS COARTADOS) AL CARGAR EL ARCHIVO
     // CON ESTO EVITO RECALCULARLOS CADA VEZ QUE SE BUSCA UNA SOLUCIÃƒÂ³N
@@ -724,7 +743,7 @@ public class Ebes extends AbstractDoubleProblem implements ConstrainedProblem<Do
     setName("Ebes");
     numberOfEval_ = 1;
 
-    String file = EBEsReadProblems() + ".ebe";
+    //String file = EBEsReadProblems() + ".ebe";
 
     try {
       // read file topology structural

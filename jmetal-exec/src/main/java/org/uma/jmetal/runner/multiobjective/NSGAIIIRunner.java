@@ -67,7 +67,8 @@ public class NSGAIIIRunner extends AbstractAlgorithmRunner {
     //String problemName = "org.uma.jmetal.problem.multiobjective.dtlz.DTLZ1" ;
 
     //problem = ProblemUtils.loadProblem(problemName);
-    problem = new Ebes() ;
+    //problem = new Ebes("Mobile_Bridge_25N_35B_8G_16OrdZXY.ebe", new String[]{"W", "D", "ENS"}) ;
+    problem = new Ebes("Displaced_Column_for_Vehicle_Ramp.ebe", new String[]{"W", "D", "ENS"}) ;
 
     double crossoverProbability = 0.9 ;
     double crossoverDistributionIndex = 30.0 ;
@@ -83,7 +84,7 @@ public class NSGAIIIRunner extends AbstractAlgorithmRunner {
             .setCrossoverOperator(crossover)
             .setMutationOperator(mutation)
             .setSelectionOperator(selection)
-            .setMaxIterations(500)
+            .setMaxIterations(1000)
             .build() ;
 
     AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm)
