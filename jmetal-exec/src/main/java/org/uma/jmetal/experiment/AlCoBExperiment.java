@@ -14,30 +14,24 @@
 package org.uma.jmetal.experiment;
 
 import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.algorithm.multiobjective.gwasfga.GWASFGA;
+import org.uma.jmetal.algorithm.multiobjective.gde3.GDE3Builder;
 import org.uma.jmetal.algorithm.multiobjective.mocell.MOCellBuilder;
 import org.uma.jmetal.algorithm.multiobjective.moead.MOEADBuilder;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.algorithm.multiobjective.smpso.SMPSOBuilder;
 import org.uma.jmetal.algorithm.multiobjective.smsemoa.SMSEMOABuilder;
 import org.uma.jmetal.algorithm.multiobjective.spea2.SPEA2Builder;
-import org.uma.jmetal.operator.CrossoverOperator;
-import org.uma.jmetal.operator.MutationOperator;
-import org.uma.jmetal.operator.SelectionOperator;
 import org.uma.jmetal.operator.impl.crossover.SBXCrossover;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
-import org.uma.jmetal.operator.impl.selection.BinaryTournamentSelection;
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.problem.Problem;
+import org.uma.jmetal.problem.impl.AbstractDoubleProblem;
 import org.uma.jmetal.problem.impl.AbstractGenericProblem;
-import org.uma.jmetal.problem.multiobjective.zdt.*;
 import org.uma.jmetal.qualityindicator.impl.*;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
 import org.uma.jmetal.solution.DoubleSolution;
-import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
-import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 import org.uma.jmetal.util.experiment.Experiment;
 import org.uma.jmetal.util.experiment.ExperimentBuilder;
@@ -69,7 +63,7 @@ import java.util.List;
  *
  * @author Antonio J. Nebro <antonio@lcc.uma.es>
  */
-public class IJISExperiment {
+public class AlCoBExperiment {
   public static void main(String[] args) throws IOException {
     if (args.length != 2) {
       throw new JMetalException("Needed arguments: experimentBaseDirectory referenceFrontDirectory") ;
@@ -77,42 +71,25 @@ public class IJISExperiment {
     String experimentBaseDirectory = args[0] ;
     String referenceFrontDirectory = args[1] ;
 
-    List<Problem<DoubleSolution>> problemList = new ArrayList<>() ;
-
-    String problemName ;
-/*
-    problemName = "BB110";
-    for (int i = 1 ; i <= 10; i ++) {
-      if (i < 10) {
-        problemList.add(new P(problemName + "0" + i));
-      } else {
-        problemList.add(new P(problemName + i));
-      }
-    }
-
-    problemName = "BB120";
-    for (int i = 1 ; i <= 10; i ++) {
-      if (i < 10) {
-        problemList.add(new P(problemName + "0" + i));
-      } else {
-        problemList.add(new P(problemName + i));
-      }
-    }
-
-*/
-    problemName = "BB200";
-    for (int i = 1 ; i <= 9; i ++) {
-      if (i < 9) {
-        problemList.add(new P(problemName + "0" + i));
-      } else {
-        problemList.add(new P(problemName + i));
-      }
-    }
+    List<Problem<DoubleSolution>> problemList = Arrays.<Problem<DoubleSolution>>asList(
+        new P("1AJV", 23),
+        new P("1AJX", 23),
+        new P("1D4K", 23),
+        new P("1G2K", 23),
+        new P("1HIV", 23),
+        new P("1HPX", 23),
+        new P("1HTF", 23),
+        new P("1HTG", 14),
+        new P("1HVH", 23),
+        new P("1VB9", 23),
+        new P("2UPJ", 23)
+    ) ;
+    //    new P("BB11001"), new P("BB11002")) ;
 
     List<TaggedAlgorithm<List<DoubleSolution>>> algorithmList = configureAlgorithmList(problemList) ;
 
     Experiment<DoubleSolution, List<DoubleSolution>> experiment =
-        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("ijisStudy")
+        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("alcobStudy")
             .setAlgorithmList(algorithmList)
             .setProblemList(problemList)
             .setExperimentBaseDirectory(experimentBaseDirectory)
@@ -125,12 +102,13 @@ public class IJISExperiment {
                 new InvertedGenerationalDistance<DoubleSolution>(),
                 new InvertedGenerationalDistancePlus<DoubleSolution>())
             )
-            .setIndependentRuns(9)
+            .setIndependentRuns(30)
             .setNumberOfCores(8)
             .build();
 
     //new ExecuteAlgorithms<>(experiment).run();
-    new GenerateReferenceParetoFront(experiment).run();
+    //new GenerateReferenceParetoFront(experiment).run();
+    new GenerateReferenceParetoSetAndFrontFromDoubleSolutions(experiment).run();
     new ComputeQualityIndicators<>(experiment).run() ;
     new GenerateLatexTablesWithStatistics(experiment).run() ;
     new GenerateWilcoxonTestTablesWithR<>(experiment).run() ;
@@ -156,23 +134,21 @@ public class IJISExperiment {
       algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, problem));
     }
 
-    for (Problem<DoubleSolution> problem : problemList) {
-      Algorithm<List<DoubleSolution>> algorithm = new SPEA2Builder<DoubleSolution>(problem, new SBXCrossover(1.0, 10.0),
-          new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0))
-          .build();
-      algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, problem));
+    for (int i = 0 ; i < problemList.size(); i++) {
+      double mutationProbability = 1.0 / problemList.get(i).getNumberOfVariables() ;
+      double mutationDistributionIndex = 20.0 ;
+      Algorithm<List<DoubleSolution>> algorithm = new SMPSOBuilder((DoubleProblem)problemList.get(i),
+          new CrowdingDistanceArchive<DoubleSolution>(100))
+          .setMutation(new PolynomialMutation(mutationProbability, mutationDistributionIndex))
+          .setMaxIterations(250)
+          .setSwarmSize(100)
+          .setSolutionListEvaluator(new SequentialSolutionListEvaluator<DoubleSolution>())
+          .build() ;
+      algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, problemList.get(i))) ;
     }
 
     for (Problem<DoubleSolution> problem : problemList) {
-      Algorithm<List<DoubleSolution>> algorithm = new MOCellBuilder<DoubleSolution>(problem, new SBXCrossover(1.0, 10.0),
-          new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0))
-          .build();
-      algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, problem));
-    }
-
-    for (Problem<DoubleSolution> problem : problemList) {
-      Algorithm<List<DoubleSolution>> algorithm = new SMSEMOABuilder<DoubleSolution>(problem, new SBXCrossover(1.0, 10.0),
-          new PolynomialMutation(1.0 / problem.getNumberOfVariables(), 20.0))
+      Algorithm<List<DoubleSolution>> algorithm = new GDE3Builder((DoubleProblem) problem)
           .build();
       algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, problem));
     }
@@ -183,34 +159,26 @@ public class IJISExperiment {
       algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, problem));
     }
 
-    for (Problem<DoubleSolution> problem : problemList) {
-      CrossoverOperator<DoubleSolution> crossover;
-      MutationOperator<DoubleSolution> mutation;
-      SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;
-
-      double crossoverProbability = 0.9 ;
-      double crossoverDistributionIndex = 20.0 ;
-      crossover = new SBXCrossover(crossoverProbability, crossoverDistributionIndex) ;
-
-      double mutationProbability = 1.0 / problem.getNumberOfVariables() ;
-      double mutationDistributionIndex = 20.0 ;
-      mutation = new PolynomialMutation(mutationProbability, mutationDistributionIndex) ;
-
-      selection = new BinaryTournamentSelection<DoubleSolution>(new RankingAndCrowdingDistanceComparator<DoubleSolution>());
-
-      Algorithm<List<DoubleSolution>> algorithm = new GWASFGA<DoubleSolution>(problem, 100, 2000, crossover, mutation, selection,new SequentialSolutionListEvaluator<DoubleSolution>()) ;
-      algorithms.add(new TaggedAlgorithm<List<DoubleSolution>>(algorithm, problem));
-    }
-
     return algorithms ;
   }
 
-  private static class P extends AbstractGenericProblem<DoubleSolution> {
-    public P(String name) {
+  private static class P extends AbstractDoubleProblem {
+    public P(String name, int variables) {
       setName(name);
       setNumberOfConstraints(0);
       setNumberOfObjectives(2);
-      setNumberOfVariables(2);
+      setNumberOfVariables(variables);
+
+      List<Double> upperLimit = new ArrayList<>(getNumberOfVariables()) ;
+      List<Double> lowerLimit = new ArrayList<>(getNumberOfVariables()) ;
+
+      for (int i = 0; i < getNumberOfVariables(); i++) {
+        lowerLimit.add(0.0);
+        upperLimit.add(1.0);
+      }
+
+      setLowerLimit(lowerLimit);
+      setUpperLimit(upperLimit);
     }
 
     @Override
