@@ -85,7 +85,7 @@ public class Srinivas extends AbstractDoubleProblem implements ConstrainedProble
     double overallConstraintViolation = 0.0;
     int violatedConstraints = 0;
     for (int i = 0; i < getNumberOfConstraints(); i++) {
-      if (constraint[i]<0.0){
+      if (constraint[i] < 0.0){
         overallConstraintViolation+=constraint[i];
         violatedConstraints++;
       }

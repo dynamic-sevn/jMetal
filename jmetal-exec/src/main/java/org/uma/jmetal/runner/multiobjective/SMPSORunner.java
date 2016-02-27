@@ -72,8 +72,8 @@ public class SMPSORunner extends AbstractAlgorithmRunner {
       referenceParetoFront = ""; //"jmetal-problem/src/test/resources/pareto_fronts/ZDT4.pf" ;
     }
 
-//    problem = (DoubleProblem) ProblemUtils.<DoubleSolution> loadProblem(problemName);
-    problem = new Ebes() ;
+    problem = (DoubleProblem) ProblemUtils.<DoubleSolution> loadProblem(problemName);
+    //problem = new Ebes() ;
 
     BoundedArchive<DoubleSolution> archive = new CrowdingDistanceArchive<DoubleSolution>(100) ;
 
@@ -83,7 +83,7 @@ public class SMPSORunner extends AbstractAlgorithmRunner {
 
     algorithm = new SMPSOBuilder(problem, archive)
         .setMutation(mutation)
-        .setMaxIterations(2000)
+        .setMaxIterations(250)
         .setSwarmSize(100)
         .setRandomGenerator(new MersenneTwisterGenerator())
         .setSolutionListEvaluator(new SequentialSolutionListEvaluator<DoubleSolution>())
