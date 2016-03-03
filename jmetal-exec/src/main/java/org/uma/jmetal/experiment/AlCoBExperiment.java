@@ -89,7 +89,7 @@ public class AlCoBExperiment {
     List<TaggedAlgorithm<List<DoubleSolution>>> algorithmList = configureAlgorithmList(problemList) ;
 
     Experiment<DoubleSolution, List<DoubleSolution>> experiment =
-        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("alcobStudy")
+        new ExperimentBuilder<DoubleSolution, List<DoubleSolution>>("alcob2016")
             .setAlgorithmList(algorithmList)
             .setProblemList(problemList)
             .setExperimentBaseDirectory(experimentBaseDirectory)
@@ -108,12 +108,12 @@ public class AlCoBExperiment {
 
     //new ExecuteAlgorithms<>(experiment).run();
     //new GenerateReferenceParetoFront(experiment).run();
-    new GenerateReferenceParetoSetAndFrontFromDoubleSolutions(experiment).run();
-    new ComputeQualityIndicators<>(experiment).run() ;
-    new GenerateLatexTablesWithStatistics(experiment).run() ;
-    new GenerateWilcoxonTestTablesWithR<>(experiment).run() ;
-    new GenerateFriedmanTestTables<>(experiment).run();
-    new GenerateBoxplotsWithR<>(experiment).setRows(1).setColumns(2).setDisplayNotch().run();
+    //new GenerateReferenceParetoSetAndFrontFromDoubleSolutions(experiment).run();
+    //new ComputeQualityIndicators<>(experiment).run() ;
+    //new GenerateLatexTablesWithStatistics(experiment).run() ;
+    //new GenerateWilcoxonTestTablesWithR<>(experiment).run() ;
+    //new GenerateFriedmanTestTables<>(experiment).run();
+    new GenerateBoxplotsWithR<>(experiment).setRows(3).setColumns(2).setDisplayNotch().run();
   }
 
   /**
